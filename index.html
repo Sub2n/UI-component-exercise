@@ -371,7 +371,7 @@
         this.$accordion = document.querySelector(this.config.selector);
 
         // multi 설정이 true이면 multiActiveMenu, false면 singleActiveMenu Event Handeler 등록
-        // this를 바인딩 => 해주지 않으면 이벤트 핸들러 내부의 this가 window가 됨
+        // this를 바인딩 => 해주지 않으면 이벤트 핸들러 내부의 this가 해당 event handler가 바인딩된 HTML element가 됨
         this.$accordion.addEventListener('click', this.config.multi ? this.multiActiveMenu.bind(this) : this.singleActiveMenu.bind(this));
       }
 

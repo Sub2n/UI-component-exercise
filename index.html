@@ -359,13 +359,19 @@
       }
     }
 
+    /* 
+      Accordian UI
+      Wirrten by Subin
+      2019.06.11
+    */
     class Accordion {
       constructor(options) {
         // 기본 옵션과 사용자 지정 옵션을 병합
         this.config = Accordion.mergeConfig(options);
         this.$accordion = document.querySelector(this.config.selector);
 
-        // do something!
+        // multi 설정이 true이면 multiActiveMenu, false면 singleActiveMenu Event Handeler 등록
+        // this를 바인딩 => 해주지 않으면 이벤트 핸들러 내부의 this가 window가 됨
         this.$accordion.addEventListener('click', this.config.multi ? this.multiActiveMenu.bind(this) : this.singleActiveMenu.bind(this));
       }
 
@@ -379,27 +385,32 @@
         return { ...config, ...options };
       }
 
+      // click시 animation render function
       render() {
         [...this.$accordion.children].forEach((menu) => { menu.lastElementChild.style.height = menu.classList.contains('active') ? menu.lastElementChild.scrollHeight + 'px' : '0'; });
       }
 
-      // do something!
-      // multi open 가능이면
-      multiActiveMenu(e) {
+      // target이 icon인지 menu인지 check
+      checkTarget(e) {
         let target;
         if (e.target.classList.contains('menu')) target = e.target;
         else if (e.target.classList.contains('fa')) target = e.target.parentNode;
-        else return;
+        return target;
+      }
+
+      // multi open 가능일 때 menu click event handler
+      multiActiveMenu(e) {
+        const target = this.checkTarget(e);
+        if (!target) return;
 
         target.parentNode.classList.toggle('active');
         this.render();
       }
 
+      // multi false일 때 menu click event handler
       singleActiveMenu(e) {
-        let target;
-        if (e.target.classList.contains('menu')) target = e.target;
-        else if (e.target.classList.contains('fa')) target = e.target.parentNode;
-        else return;
+        const target = this.checkTarget(e);
+        if (!target) return;
 
         if (target.parentNode.classList.contains('active')) target.parentNode.classList.remove('active');
         else {
@@ -410,7 +421,12 @@
       }
     }
 
-    // Range Slider
+    /* 
+      Range Slider
+      Wirrten by Subin
+      2019.06.11
+    */
+    // DOM Selector
     const $range = document.querySelector('.range');
     const $track = document.querySelector('.range-track');
     const $fill = document.querySelector('.range-track.fill');
@@ -429,13 +445,18 @@
      * @param {MouseEvent} e - 이벤트 객체
      */
     function rangeHandler(e) {
-      // do something!
+      // mouse position이 range를 벗어나지 않게 컨트롤
       if (e.clientX - left > width || right - e.clientX > width) return;
+      // 현재 mouse 포지션과 gradient degree
       const currentPos = e.clientX - left;
       const currentDeg = Math.floor((360 / width) * currentPos);
+      // handle 이동
       $handle.style.transform = `translate3d(${currentPos}px, 0, 0)`;
+      // handle 이동하는 만큼 fill bar 게이지 채우기
       $fill.style.width = `${(currentPos / width) * 100}%`;
+      // 변화하는 degree 화면에 보여주기
       $gradientAngle.innerHTML = `${currentDeg}`;
+      // handle 움직임에 따른 background-image linear-gradient 변경
       $gradient.setAttribute('style', `background-image: linear-gradient(${currentDeg}deg, #08aeea 0%, #2af598 100%)`);
     }
 
@@ -456,6 +477,7 @@
       $range.removeEventListener('mousemove', rangeHandler);
     });
 
+    // window onload: Resource loading이 완료되면 발생하는 event
     window.onload = function () {
       const tab = new Tab([
         {
